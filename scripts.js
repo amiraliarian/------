@@ -5,10 +5,6 @@ const ctx = canvas.getContext('2d');
 const FIXED_WIDTH = 200;
 const FIXED_HEIGHT = 200;
 let originalImageData = null;
-let isCropping = false;
-let cropStartX = 0;
-let cropStartY = 0;
-let aspectRatio = 1;
 
 upload.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -22,7 +18,6 @@ upload.addEventListener('change', (e) => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing new image
                 ctx.drawImage(img, 0, 0, FIXED_WIDTH, FIXED_HEIGHT);
                 originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                resetCroppingState();
             };
             img.src = event.target.result;
         };
@@ -93,78 +88,25 @@ document.getElementById('purple-filter').addEventListener('click', () => {
     });
 });
 
-document.getElementById('crop').addEventListener('click', () => {
-    isCropping = !isCropping;
-    if (isCropping) {
-        canvas.style.cursor = 'crosshair';
-    } else {
-        canvas.style.cursor = 'default';
-    }
-});
-
 document.getElementById('reset').addEventListener('click', () => {
     if (originalImageData) {
         canvas.width = FIXED_WIDTH;
         canvas.height = FIXED_HEIGHT;
         ctx.putImageData(originalImageData, 0, 0);
-        resetCroppingState();
     }
 });
 
 document.getElementById('download').addEventListener('click', () => {
+    const format = document.getElementById('image-format').value;
     const link = document.createElement('a');
-    link.download = 'edited-image.png';
-    link.href = canvas.toDataURL();
+    link.download = `edited-image.${format}`;
+    if (format === 'jpeg') {
+        link.href = canvas.toDataURL('image/jpeg');
+    } else {
+        link.href = canvas.toDataURL('image/png');
+    }
     link.click();
 });
-
-document.getElementById('aspect-ratio').addEventListener('change', (e) => {
-    aspectRatio = parseFloat(e.target.value);
-});
-
-canvas.addEventListener('mousedown', (e) => {
-    if (isCropping) {
-        cropStartX = e.offsetX;
-        cropStartY = e.offsetY;
-    }
-});
-
-canvas.addEventListener('mousemove', (e) => {
-    if (isCropping) {
-        const cropEndX = e.offsetX;
-        const cropEndY = cropStartY + (cropEndX - cropStartX) / aspectRatio;
-        drawCropRectangle(cropStartX, cropStartY, cropEndX, cropEndY);
-    }
-});
-
-canvas.addEventListener('mouseup', (e) => {
-    if (isCropping) {
-        const cropEndX = e.offsetX;
-        const cropEndY = cropStartY + (cropEndX - cropStartX) / aspectRatio;
-        const cropWidth = cropEndX - cropStartX;
-        const cropHeight = cropEndY - cropStartY;
-
-        if (cropWidth > 0 && cropHeight > 0) {
-            const croppedImageData = ctx.getImageData(cropStartX, cropStartY, cropWidth, cropHeight);
-            canvas.width = cropWidth;
-            canvas.height = cropHeight;
-            ctx.putImageData(croppedImageData, 0, 0);
-            originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        }
-
-        isCropping = false;
-        canvas.style.cursor = 'default';
-    }
-});
-
-function drawCropRectangle(x1, y1, x2, y2) {
-    ctx.putImageData(originalImageData, 0, 0); // Restore original image
-    ctx.beginPath();
-    ctx.rect(x1, y1, x2 - x1, y2 - y1);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'red';
-    ctx.stroke();
-}
 
 function applyFilter(filterFunction) {
     if (!originalImageData) return;
@@ -176,11 +118,4 @@ function applyFilter(filterFunction) {
         [imageData.data[i], imageData.data[i + 1], imageData.data[i + 2]] = filterFunction(r, g, b);
     }
     ctx.putImageData(imageData, 0, 0);
-}
-
-function resetCroppingState() {
-    isCropping = false;
-    cropStartX = 0;
-    cropStartY = 0;
-    canvas.style.cursor = 'default';
 }
