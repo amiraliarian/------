@@ -15,7 +15,7 @@ upload.addEventListener('change', (e) => {
             img.onload = () => {
                 canvas.width = FIXED_WIDTH;
                 canvas.height = FIXED_HEIGHT;
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing new image
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0, FIXED_WIDTH, FIXED_HEIGHT);
                 originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             };
@@ -57,21 +57,20 @@ document.getElementById('invert').addEventListener('click', () => {
 
 document.getElementById('brightness').addEventListener('click', () => {
     applyFilter((r, g, b) => {
-        let factor = 1.2; // Increase brightness by 20%
+        let factor = 1.2;
         return [r * factor, g * factor, b * factor];
     });
 });
 
 document.getElementById('decrease-brightness').addEventListener('click', () => {
     applyFilter((r, g, b) => {
-        let factor = 0.8; // Decrease brightness by 20%
-        return [r * factor, g * factor, b * factor];
+        let factor = 0.8; return [r * factor, g * factor, b * factor];
     });
 });
 
 document.getElementById('contrast').addEventListener('click', () => {
     applyFilter((r, g, b) => {
-        let factor = 1.5; // Increase contrast by 50%
+        let factor = 1.5;
         return [(r - 128) * factor + 128, (g - 128) * factor + 128, (b - 128) * factor + 128];
     });
 });
