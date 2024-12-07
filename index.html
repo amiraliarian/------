@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایشگر تصویر ساده</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>ویرایشگر تصویر ساده</h1>
+    <input type="file" id="upload" accept="image/*">
+    <br>
+    <canvas id="canvas"></canvas>
+    <br>
+    <div class="buttons">
+        <button id="grayscale">سیاه و سفید</button>
+        <button id="sepia">سپیا</button>
+        <button id="blur">بلور</button>
+        <button id="invert">معکوس</button>
+        <button id="brightness">روشنایی</button>
+        <button id="decrease-brightness">کاهش روشنایی</button>
+        <button id="contrast">کنتراست</button>
+        <button id="green-filter">فیلتر سبز</button>
+        <button id="purple-filter">فیلتر بنفش</button>
+        <button id="crop">برش</button>
+        <label for="aspect-ratio">نسبت ابعاد:</label>
+        <select id="aspect-ratio">
+            <option value="1">1:1</option>
+            <option value="4/3">4:3</option>
+            <option value="16/9">16:9</option>
+        </select>
+        <button id="reset">بازنشانی</button>
+        <button id="download">دانلود</button>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
