@@ -50,8 +50,7 @@ button {
 button:hover {
     background-color: #0056b3;
 }
-
-/* واکنش‌گرا کردن */
+ 
 @media (max-width: 600px) {
     body {
         padding: 10px;

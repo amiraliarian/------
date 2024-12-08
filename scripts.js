@@ -15,7 +15,7 @@ upload.addEventListener('change', (e) => {
             img.onload = () => {
                 canvas.width = FIXED_WIDTH;
                 canvas.height = FIXED_HEIGHT;
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing new image
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
                 ctx.drawImage(img, 0, 0, FIXED_WIDTH, FIXED_HEIGHT);
                 originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             };
@@ -83,8 +83,8 @@ document.getElementById('download').addEventListener('click', () => {
 
 function applyFilters() {
     if (!originalImageData) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before applying filters
-    ctx.putImageData(originalImageData, 0, 0); // Restore the original image
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    ctx.putImageData(originalImageData, 0, 0); 
 
     let grayscaleValue = document.getElementById('grayscale').value;
     let sepiaValue = document.getElementById('sepia').value;
@@ -96,18 +96,15 @@ function applyFilters() {
     let purpleFilterValue = document.getElementById('purple-filter').value;
 
     ctx.filter = `grayscale(${grayscaleValue}%) sepia(${sepiaValue}%) blur(${blurValue}px) brightness(${brightnessValue}%) contrast(${contrastValue}%) invert(${invertValue}%)`;
-    ctx.drawImage(canvas, 0, 0); // Apply the filter to the current canvas content
-
-    // Apply green and purple filters separately as they are not supported by CSS filter
+    ctx.drawImage(canvas, 0, 0); 
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let data = imageData.data;
 
-    // Green Filter
+ 
     for (let i = 0; i < data.length; i += 4) {
         data[i + 1] = data[i + 1] * (1 + greenFilterValue / 100);
     }
-
-    // Purple Filter
+ 
     for (let i = 0; i < data.length; i += 4) {
         data[i] = data[i] * (1 + purpleFilterValue / 100);
         data[i + 2] = data[i + 2] * (1 + purpleFilterValue / 100);
