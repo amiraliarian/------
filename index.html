@@ -13,15 +13,22 @@
     <canvas id="canvas"></canvas>
     <br>
     <div class="buttons">
-        <button id="grayscale">سیاه و سفید</button>
-        <button id="sepia">سپیا</button>
-        <button id="blur">بلور</button>
-        <button id="invert">معکوس</button>
-        <button id="brightness">روشنایی</button>
-        <button id="decrease-brightness">کاهش روشنایی</button>
-        <button id="contrast">کنتراست</button>
-        <button id="green-filter">فیلتر سبز</button>
-        <button id="purple-filter">فیلتر بنفش</button>
+        <label for="grayscale">سیاه و سفید</label>
+        <input type="range" id="grayscale" min="0" max="100" value="0">
+        <label for="sepia">سپیا</label>
+        <input type="range" id="sepia" min="0" max="100" value="0">
+        <label for="blur">بلور</label>
+        <input type="range" id="blur" min="0" max="10" value="0">
+        <label for="brightness">روشنایی</label>
+        <input type="range" id="brightness" min="0" max="200" value="100">
+        <label for="contrast">کنتراست</label>
+        <input type="range" id="contrast" min="0" max="200" value="100">
+        <label for="invert">معکوس</label>
+        <input type="range" id="invert" min="0" max="100" value="0">
+        <label for="green-filter">فیلتر سبز</label>
+        <input type="range" id="green-filter" min="0" max="100" value="0">
+        <label for="purple-filter">فیلتر بنفش</label>
+        <input type="range" id="purple-filter" min="0" max="100" value="0">
         <label for="image-format">فرمت تصویر:</label>
         <select id="image-format">
             <option value="png">PNG</option>

@@ -15,76 +15,49 @@ upload.addEventListener('change', (e) => {
             img.onload = () => {
                 canvas.width = FIXED_WIDTH;
                 canvas.height = FIXED_HEIGHT;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing new image
                 ctx.drawImage(img, 0, 0, FIXED_WIDTH, FIXED_HEIGHT);
                 originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             };
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
+        reader.onerror = () => {
+            alert('خطا در بارگذاری تصویر. لطفاً مجدداً تلاش کنید.');
+        };
     }
 });
 
-document.getElementById('grayscale').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        let avg = (r + g + b) / 3;
-        return [avg, avg, avg];
-    });
+document.getElementById('grayscale').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('sepia').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        return [
-            r * 0.393 + g * 0.769 + b * 0.189,
-            r * 0.349 + g * 0.686 + b * 0.168,
-            r * 0.272 + g * 0.534 + b * 0.131
-        ];
-    });
+document.getElementById('sepia').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('blur').addEventListener('click', () => {
-    ctx.filter = 'blur(5px)';
-    ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
-    ctx.filter = 'none';
-    originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+document.getElementById('blur').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('invert').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        return [255 - r, 255 - g, 255 - b];
-    });
+document.getElementById('brightness').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('brightness').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        let factor = 1.2;
-        return [r * factor, g * factor, b * factor];
-    });
+document.getElementById('contrast').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('decrease-brightness').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        let factor = 0.8; return [r * factor, g * factor, b * factor];
-    });
+document.getElementById('invert').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('contrast').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        let factor = 1.5;
-        return [(r - 128) * factor + 128, (g - 128) * factor + 128, (b - 128) * factor + 128];
-    });
+document.getElementById('green-filter').addEventListener('input', () => {
+    applyFilters();
 });
 
-document.getElementById('green-filter').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        return [r * 0.5, g, b * 0.5];
-    });
-});
-
-document.getElementById('purple-filter').addEventListener('click', () => {
-    applyFilter((r, g, b) => {
-        return [r * 0.5, g * 0.5, b];
-    });
+document.getElementById('purple-filter').addEventListener('input', () => {
+    applyFilters();
 });
 
 document.getElementById('reset').addEventListener('click', () => {
@@ -92,6 +65,7 @@ document.getElementById('reset').addEventListener('click', () => {
         canvas.width = FIXED_WIDTH;
         canvas.height = FIXED_HEIGHT;
         ctx.putImageData(originalImageData, 0, 0);
+        resetFilters();
     }
 });
 
@@ -107,14 +81,48 @@ document.getElementById('download').addEventListener('click', () => {
     link.click();
 });
 
-function applyFilter(filterFunction) {
+function applyFilters() {
     if (!originalImageData) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before applying filters
+    ctx.putImageData(originalImageData, 0, 0); // Restore the original image
+
+    let grayscaleValue = document.getElementById('grayscale').value;
+    let sepiaValue = document.getElementById('sepia').value;
+    let blurValue = document.getElementById('blur').value;
+    let brightnessValue = document.getElementById('brightness').value;
+    let contrastValue = document.getElementById('contrast').value;
+    let invertValue = document.getElementById('invert').value;
+    let greenFilterValue = document.getElementById('green-filter').value;
+    let purpleFilterValue = document.getElementById('purple-filter').value;
+
+    ctx.filter = `grayscale(${grayscaleValue}%) sepia(${sepiaValue}%) blur(${blurValue}px) brightness(${brightnessValue}%) contrast(${contrastValue}%) invert(${invertValue}%)`;
+    ctx.drawImage(canvas, 0, 0); // Apply the filter to the current canvas content
+
+    // Apply green and purple filters separately as they are not supported by CSS filter
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < imageData.data.length; i += 4) {
-        let r = imageData.data[i];
-        let g = imageData.data[i + 1];
-        let b = imageData.data[i + 2];
-        [imageData.data[i], imageData.data[i + 1], imageData.data[i + 2]] = filterFunction(r, g, b);
+    let data = imageData.data;
+
+    // Green Filter
+    for (let i = 0; i < data.length; i += 4) {
+        data[i + 1] = data[i + 1] * (1 + greenFilterValue / 100);
     }
-    ctx.putImageData(imageData, 0, 0);
+
+    // Purple Filter
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = data[i] * (1 + purpleFilterValue / 100);
+        data[i + 2] = data[i + 2] * (1 + purpleFilterValue / 100);
+    }
+
+    ctx.putImageData(imageData, 0, 0); // Apply green and purple filter changes
+}
+
+function resetFilters() {
+    document.getElementById('grayscale').value = 0;
+    document.getElementById('sepia').value = 0;
+    document.getElementById('blur').value = 0;
+    document.getElementById('brightness').value = 100;
+    document.getElementById('contrast').value = 100;
+    document.getElementById('invert').value = 0;
+    document.getElementById('green-filter').value = 0;
+    document.getElementById('purple-filter').value = 0;
 }

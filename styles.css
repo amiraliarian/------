@@ -7,18 +7,22 @@ body {
     margin: 0;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 h1 {
     margin-bottom: 20px;
+    text-align: center;
 }
 
 canvas {
     border: 1px solid #000;
     margin-top: 10px;
-    max-width: 100%;
-    max-height: 80vh;
+    width: 100%;
+    max-width: 500px;
     background-color: white;
+    object-fit: contain;
 }
 
 .buttons {
@@ -28,10 +32,13 @@ canvas {
     margin-top: 10px;
 }
 
-button {
+label, input[type="range"], select, button {
     margin: 5px;
-    padding: 10px 20px;
+    padding: 10px;
     font-size: 16px;
+}
+
+button {
     cursor: pointer;
     background-color: #007bff;
     color: white;
@@ -44,12 +51,18 @@ button:hover {
     background-color: #0056b3;
 }
 
-input[type="file"] {
-    margin-bottom: 10px;
-}
+/* واکنش‌گرا کردن */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
 
-label, select {
-    margin: 5px;
-    padding: 10px;
-    font-size: 16px;
+    h1 {
+        font-size: 20px;
+    }
+
+    label, input[type="range"], select, button {
+        font-size: 14px;
+        padding: 8px;
+    }
 }
